@@ -42,12 +42,16 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // FloatingActionButton 을 누르면 새로운 Activity를 시작
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                // 1. intent 객체생성
                 Intent intent = new Intent(MainActivity.this,
                         OrderActivity.class);
+                // 2. 새로운 Activity 시작
                 startActivity(intent);
             }
         });
