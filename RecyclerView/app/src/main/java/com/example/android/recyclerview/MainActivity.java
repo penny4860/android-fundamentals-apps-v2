@@ -35,6 +35,7 @@ import java.util.LinkedList;
  */
 public class MainActivity extends AppCompatActivity {
 
+    // RecyclerView 에 연결한 dataset : linked-list or array
     private final LinkedList<String> mWordList = new LinkedList<>();
 
     private RecyclerView mRecyclerView;
@@ -66,11 +67,11 @@ public class MainActivity extends AppCompatActivity {
             mWordList.addLast("Word " + i);
         }
 
-        // Create recycler view.
+        // 1. Create recycler view.
         mRecyclerView = findViewById(R.id.recyclerview);
-        // Create an adapter and supply the data to be displayed.
+        // 2. Create an adapter and supply the data to be displayed.
         mAdapter = new WordListAdapter(this, mWordList);
-        // Connect the adapter with the recycler view.
+        // 3. Connect the adapter with the recycler view.
         mRecyclerView.setAdapter(mAdapter);
         // Give the recycler view a default layout manager.
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
