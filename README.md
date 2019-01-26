@@ -21,6 +21,14 @@ Android Developer Fundamentals (Version 2)
 	3) Adaptor class 정의
 	4) Activity에서 RecyclerView를 표시
 
+
+## ImageRecyclerView : [ImageRecyclerView](ImageRecyclerView/)
+
+* MainActivity 클래스
+* Adapter 클래스
+* ImageViewHolder 클래스
+
+
 ## ImageView
 
 * Assets 디렉토리에 있는 이미지 파일을 띄우기
