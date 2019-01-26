@@ -24,7 +24,8 @@ Android Developer Fundamentals (Version 2)
 ## ImageView
 
 * Assets 디렉토리에 있는 이미지 파일을 띄우기
-"""	
+
+```
 AssetManager assetManager = getAssets();
 InputStream istr = null;
 try {
@@ -34,12 +35,13 @@ try {
 }
 Bitmap bitmap = BitmapFactory.decodeStream(istr);
 imageView.setImageBitmap(bitmap);
-"""	
+```	
 
 * Resource에 있는 이미지 파일을 띄우기
-"""	
+
+```	
 imageView.setImageResource(R.drawable.donut_circle);
-"""	
+```	
 
 
 
