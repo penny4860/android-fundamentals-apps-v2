@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,13 +63,21 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
     }
 
     // ViewHolder class 정의
-    class ImageViewHolder extends RecyclerView.ViewHolder {
+    class ImageViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView imageTextView;
         ImageView imageView;
         public ImageViewHolder(View itemView) {
             super(itemView);
             imageTextView = itemView.findViewById(R.id.imageFilename);
             imageView = itemView.findViewById(R.id.imageView);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            // Get the position of the item that was clicked.
+            int mPosition = getLayoutPosition();
+            Toast.makeText(mContext, mPosition + " clicked", Toast.LENGTH_LONG).show();
         }
     }
 
