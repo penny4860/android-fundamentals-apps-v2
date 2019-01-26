@@ -1,19 +1,26 @@
 package com.example.penny.imagerecyclerview;
 
 import android.content.Context;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 
 public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.ImageViewHolder> {
 
     private LinkedList<String> mFileList;
     private LayoutInflater mInflater;
+    private Context mContext;
 
     // 1. Adapter의 constructor 구현
     //      1) layout inflator : resource에서 정의한 view를 가져와서 element view를 설정
@@ -22,6 +29,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
     {
         mInflater = LayoutInflater.from(context);
         mFileList = fileList;
+        mContext = context;
     }
 
     // 2. Element View(ViewHolder) 가 생성될때 실행되는 method
@@ -36,16 +44,31 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
     @Override
     public void onBindViewHolder(ImageListAdapter.ImageViewHolder imageViewHolder, int posIndex) {
         String mCurrent = mFileList.get(posIndex);
-        imageViewHolder.imageTextView.setText(mCurrent);
+
+        //Todo: 여기서 imageView에 image를 띄워보자.
+        imageViewHolder.imageTextView.setText("style" + posIndex + ".jpg");
+        String filename = "style" + posIndex + ".jpg";
+
+        AssetManager assetManager = mContext.getAssets();
+        InputStream istr = null;
+        try {
+            istr = assetManager.open(filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Bitmap bitmap = BitmapFactory.decodeStream(istr);
+        imageViewHolder.imageView.setImageBitmap(bitmap);
     }
 
 
     // ViewHolder class 정의
     class ImageViewHolder extends RecyclerView.ViewHolder {
         TextView imageTextView;
+        ImageView imageView;
         public ImageViewHolder(View itemView) {
             super(itemView);
             imageTextView = itemView.findViewById(R.id.imageFilename);
+            imageView = itemView.findViewById(R.id.imageView);
         }
     }
 
