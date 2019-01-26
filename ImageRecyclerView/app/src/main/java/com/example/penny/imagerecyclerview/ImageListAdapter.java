@@ -45,21 +45,21 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
     public void onBindViewHolder(ImageListAdapter.ImageViewHolder imageViewHolder, int posIndex) {
         String mCurrent = mFileList.get(posIndex);
 
-        //Todo: 여기서 imageView에 image를 띄워보자.
         imageViewHolder.imageTextView.setText("style" + posIndex + ".jpg");
         String filename = "style" + posIndex + ".jpg";
-
-        AssetManager assetManager = mContext.getAssets();
-        InputStream istr = null;
+        Bitmap bitmap = null;
         try {
-            istr = assetManager.open(filename);
+            bitmap = getImage(filename);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Bitmap bitmap = BitmapFactory.decodeStream(istr);
         imageViewHolder.imageView.setImageBitmap(bitmap);
     }
 
+    @Override
+    public int getItemCount() {
+        return mFileList.size();
+    }
 
     // ViewHolder class 정의
     class ImageViewHolder extends RecyclerView.ViewHolder {
@@ -72,11 +72,17 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
         }
     }
 
-    @Override
-    public int getItemCount() {
-        return mFileList.size();
+    private Bitmap getImage(String filename) throws IOException {
+        AssetManager assetManager = mContext.getAssets();
+        InputStream istr = null;
+        try {
+            istr = assetManager.open(filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } 
+        Bitmap bitmap = BitmapFactory.decodeStream(istr);
+        return bitmap;
     }
-
 }
 
 
