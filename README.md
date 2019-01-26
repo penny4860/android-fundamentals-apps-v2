@@ -9,3 +9,41 @@ Android Developer Fundamentals (Version 2)
 * [tutorial](https://codelabs.developers.google.com/codelabs/android-training-clickable-images/index.html?index=..%2F..%2Fandroid-training#0)
 
 
+## Android fundamentals 04.5: RecyclerView : [RecyclerView](RecyclerView/)
+
+<img src="https://codelabs.developers.google.com/codelabs/android-training-create-recycler-view/img/86fabc5476249934.png" height="300">
+
+* [floating 버튼에 아이콘을 추가](https://codelabs.developers.google.com/codelabs/android-training-create-recycler-view/index.html?index=..%2F..android-training#2)
+
+* RecyclerView 사용방법
+	1) RecyclerView 위치를 layout으로 지정
+	2) DataItem class 정의
+	3) Adaptor class 정의
+	4) Activity에서 RecyclerView를 표시
+
+## ImageView
+
+* Assets 디렉토리에 있는 이미지 파일을 띄우기
+"""	
+AssetManager assetManager = getAssets();
+InputStream istr = null;
+try {
+    istr = assetManager.open("donut_circle.png");
+} catch (IOException e) {
+    e.printStackTrace();
+}
+Bitmap bitmap = BitmapFactory.decodeStream(istr);
+imageView.setImageBitmap(bitmap);
+"""	
+
+* Resource에 있는 이미지 파일을 띄우기
+"""	
+imageView.setImageResource(R.drawable.donut_circle);
+"""	
+
+
+
+
+
+
+
