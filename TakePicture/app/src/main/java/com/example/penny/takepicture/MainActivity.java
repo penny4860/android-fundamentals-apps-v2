@@ -24,11 +24,11 @@ public class MainActivity extends AppCompatActivity {
 
     class TakingPicture {
 
-        private static final int REQUEST_IMAGE_CAPTURE = 672;
+        public static final int REQUEST_IMAGE_CAPTURE = 672;
         private String imageFilePath;
         private Uri photoUri;
 
-        public void sendTakePhotoIntent() {
+        public Intent getTakePhotoIntent() {
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                 File photoFile = null;
@@ -44,9 +44,9 @@ public class MainActivity extends AppCompatActivity {
 
                     photoUri = FileProvider.getUriForFile(context, getPackageName(), photoFile);
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
                 }
             }
+            return takePictureIntent;
         }
 
         public Bitmap getImage(int requestCode, int resultCode)
@@ -118,7 +118,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 takingPicture = new TakingPicture();
-                takingPicture.sendTakePhotoIntent();
+
+                Intent takePictureIntent = takingPicture.getTakePhotoIntent();
+                startActivityForResult(takePictureIntent, takingPicture.REQUEST_IMAGE_CAPTURE);
+
             }
         });
     }
