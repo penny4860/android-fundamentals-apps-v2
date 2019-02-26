@@ -2,6 +2,7 @@ package com.example.penny.takepicture;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -20,92 +21,91 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity {
+import static android.app.Activity.RESULT_OK;
 
-    class TakingPicture {
+class TakingPicture {
 
-        public static final int REQUEST_IMAGE_CAPTURE = 672;
-        private String imageFilePath;
-        private Uri photoUri;
+    public static final int REQUEST_IMAGE_CAPTURE = 672;
+    private String imageFilePath;
+    private Uri photoUri;
 
-        public Intent getTakePhotoIntent() {
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+    public Intent getTakePhotoIntent(Context context, PackageManager packageManager, String packageName, File storageDir) {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(packageManager) != null) {
                 File photoFile = null;
-                try {
-                    photoFile = createImageFile();
-                } catch (IOException ex) {
-                    // Error occurred while creating the File
-                }
-
-                if (photoFile != null) {
-
-                    Context context = getApplicationContext();
-
-                    photoUri = FileProvider.getUriForFile(context, getPackageName(), photoFile);
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-                }
+            try {
+                photoFile = createImageFile(storageDir);
+            } catch (IOException ex) {
+                // Error occurred while creating the File
             }
-            return takePictureIntent;
-        }
 
-        public Bitmap getImage(int requestCode, int resultCode)
-        {
-            Bitmap bitmap = null;
-            if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-                bitmap = BitmapFactory.decodeFile(imageFilePath);
-                ExifInterface exif = null;
-
-                try {
-                    exif = new ExifInterface(imageFilePath);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                int exifOrientation;
-                int exifDegree;
-
-                if (exif != null) {
-                    exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-                    exifDegree = exifOrientationToDegrees(exifOrientation);
-                } else {
-                    exifDegree = 0;
-                }
-                bitmap = rotate(bitmap, exifDegree);
+            if (photoFile != null) {
+                photoUri = FileProvider.getUriForFile(context, packageName, photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
             }
-            return bitmap;
         }
-
-        private File createImageFile() throws IOException {
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            String imageFileName = "TEST_" + timeStamp + "_";
-            File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-            File image = File.createTempFile(
-                    imageFileName,      /* prefix */
-                    ".jpg",         /* suffix */
-                    storageDir          /* directory */
-            );
-            imageFilePath = image.getAbsolutePath();
-            return image;
-        }
-
-        private int exifOrientationToDegrees(int exifOrientation) {
-            if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) {
-                return 90;
-            } else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180) {
-                return 180;
-            } else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270) {
-                return 270;
-            }
-            return 0;
-        }
-
-        private Bitmap rotate(Bitmap bitmap, float degree) {
-            Matrix matrix = new Matrix();
-            matrix.postRotate(degree);
-            return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-        }
+        return takePictureIntent;
     }
+
+    public Bitmap getImage(int requestCode, int resultCode)
+    {
+        Bitmap bitmap = null;
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            bitmap = BitmapFactory.decodeFile(imageFilePath);
+            ExifInterface exif = null;
+
+            try {
+                exif = new ExifInterface(imageFilePath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            int exifOrientation;
+            int exifDegree;
+
+            if (exif != null) {
+                exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+                exifDegree = exifOrientationToDegrees(exifOrientation);
+            } else {
+                exifDegree = 0;
+            }
+            bitmap = rotate(bitmap, exifDegree);
+        }
+        return bitmap;
+    }
+
+    private File createImageFile(File storageDir) throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "TEST_" + timeStamp + "_";
+        File image = File.createTempFile(
+                imageFileName,      /* prefix */
+                ".jpg",         /* suffix */
+                storageDir          /* directory */
+        );
+        imageFilePath = image.getAbsolutePath();
+        return image;
+    }
+
+    private int exifOrientationToDegrees(int exifOrientation) {
+        if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) {
+            return 90;
+        } else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180) {
+            return 180;
+        } else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270) {
+            return 270;
+        }
+        return 0;
+    }
+
+    private Bitmap rotate(Bitmap bitmap, float degree) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
+}
+
+
+public class MainActivity extends AppCompatActivity {
 
     TakingPicture takingPicture;
 
@@ -119,7 +119,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 takingPicture = new TakingPicture();
 
-                Intent takePictureIntent = takingPicture.getTakePhotoIntent();
+                Intent takePictureIntent = takingPicture.getTakePhotoIntent(getApplicationContext(),
+                        getPackageManager(), getPackageName(),
+                        getExternalFilesDir(Environment.DIRECTORY_PICTURES));
                 startActivityForResult(takePictureIntent, takingPicture.REQUEST_IMAGE_CAPTURE);
 
             }
@@ -136,3 +138,5 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
+
+
