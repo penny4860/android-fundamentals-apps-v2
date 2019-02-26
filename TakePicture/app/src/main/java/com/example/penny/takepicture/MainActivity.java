@@ -1,5 +1,6 @@
 package com.example.penny.takepicture;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,9 +22,34 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
+    class TakingPicture {
+        private void sendTakePhotoIntent() {
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                File photoFile = null;
+                try {
+                    photoFile = createImageFile();
+                } catch (IOException ex) {
+                    // Error occurred while creating the File
+                }
+
+                if (photoFile != null) {
+
+                    Context context = getApplicationContext();
+
+                    photoUri = FileProvider.getUriForFile(context, getPackageName(), photoFile);
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                }
+            }
+        }
+    }
+
     private static final int REQUEST_IMAGE_CAPTURE = 672;
     private String imageFilePath;
     private Uri photoUri;
+
+    TakingPicture takingPicture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.take).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendTakePhotoIntent();
+                takingPicture = new TakingPicture();
+                takingPicture.sendTakePhotoIntent();
             }
         });
     }
@@ -79,25 +106,6 @@ public class MainActivity extends AppCompatActivity {
         Matrix matrix = new Matrix();
         matrix.postRotate(degree);
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-    }
-
-
-    private void sendTakePhotoIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-            }
-
-            if (photoFile != null) {
-                photoUri = FileProvider.getUriForFile(this, getPackageName(), photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-            }
-        }
     }
 
     private File createImageFile() throws IOException {
