@@ -31,6 +31,9 @@ Android Developer Fundamentals (Version 2)
 ## 카메라에서 사진찍기 : [TakePicture](TakePicture/)
 
 
+## Image 갤러리에서 로드/저장 : [PickImageFromGallay](PickImageFromGallay/)
+
+
 ## ImageView
 
 * Assets 디렉토리에 있는 이미지 파일을 띄우기
